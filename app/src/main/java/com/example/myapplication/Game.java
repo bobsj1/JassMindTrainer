@@ -19,6 +19,7 @@ import com.example.myapplication.graphics.Sprite;
  */
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private final Player player;
+    private final Joystick joystick;
     private GameLoop gameLoop;
     //private Sprite sprite;
 
@@ -33,7 +34,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         this.gameLoop = new GameLoop(this, surfaceHolder);
 
 
-        //init player
+        //init game objects
+        joystick = new Joystick(400, 800, 100, 60);
         player = new Player(getContext(), 500, 500, 50);
 
         setFocusable(true);
@@ -47,11 +49,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         //handle touch event actions
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                player.setPosition((double) event.getX(), (double) event.getY());
+                if(joystick.isPressed((double) event.getX(), (double) event.getY())){
+                    joystick.setIsPressed(true);
+                }
                 return true;
             case MotionEvent.ACTION_MOVE:
-                player.setPosition((double) event.getX(), (double) event.getY());
+                if(joystick.getIsPressed()){
+                    joystick.setActuator((double) event.getX(), (double) event.getY());
+                }
                 return true;
+            case MotionEvent.ACTION_UP:
+                joystick.setIsPressed(false);
+                joystick.resetActuator();
+                return  true;
         }
         return super.onTouchEvent(event);
     }
@@ -77,6 +87,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         drawUPS(canvas);
         drawFPS(canvas);
 
+        joystick.draw(canvas);
         player.draw(canvas);
     }
 
@@ -100,6 +111,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     //updates game state
     public void update() {
-        player.update();
+        joystick.update();
+        player.update(joystick);
     }
 }
