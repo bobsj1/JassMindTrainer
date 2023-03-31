@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -10,6 +11,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.myapplication.object.Enemy;
 import com.example.myapplication.object.Player;
+import com.example.myapplication.object.Table;
 
 /**
  * Game manages, renders and updates all objects
@@ -19,10 +21,13 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private final Player player;
     private final Joystick joystick;
     private final Enemy enemy;
+    private final Table table;
+
     private GameLoop gameLoop;
+
     //private Sprite sprite;
 
-    public Game(Context context) {
+    public Game(Context context, DisplayMetrics displayMetrics) {
         super(context);
 
         // Get surface holder and add callback
@@ -32,14 +37,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         //create gameloop
         this.gameLoop = new GameLoop(this, surfaceHolder);
 
+        float displayHeight = displayMetrics.heightPixels;
+        float diplayWidth = displayMetrics.widthPixels;
 
         //init game objects
         joystick = new Joystick(400, 800, 100, 60);
         player = new Player(getContext(), joystick,500, 500, 50);
         enemy = new Enemy(getContext(), player, 100, 100,  50);
-
+        table  = new Table(diplayWidth/2,displayHeight/2, ContextCompat.getColor(context, R.color.table));
         setFocusable(true);
-
     }
 
 
@@ -90,6 +96,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         joystick.draw(canvas);
         player.draw(canvas);
         enemy.draw(canvas);
+        table.draw(canvas);
     }
 
     public void drawUPS(Canvas canvas){

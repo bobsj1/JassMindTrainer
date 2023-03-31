@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="player">#FFF0FFFF</color>
     <color name="enemy">#F0F0F0FF</color>
+    <color name="table">#006400</color>
 </resources>
